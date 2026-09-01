@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NILO ERP</title>
+
+<style>
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f6f8;
+    color: #1f2329;
+  }
+
+  /* ===== LOGIN ===== */
+
+  #telaLogin {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .caixa-login {
+    background: #fff;
+    border-radius: 14px;
+    padding: 32px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  .caixa-login h1 {
+    font-size: 20px;
+    margin: 0 0 4px;
+  }
+
+  .caixa-login p {
+    margin: 0 0 22px;
+    color: #6b7280;
+    font-size: 13px;
+  }
+
+  .campo {
+    margin-bottom: 14px;
+  }
+
+  .campo label {
+    display: block;
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .campo input, .campo select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #d6d9dd;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+
+  .campo input:focus, .campo select:focus {
+    outline: none;
+    border-color: #222;
+  }
+
+  .btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .btn-principal {
+    background: #222;
+    color: #fff;
+    width: 100%;
+  }
+
+  .btn-secundario {
+    background: #e5e5e5;
+    color: #222;
+  }
+
+  .btn-perigo {
+    background: #c5221f;
+    color: #fff;
+  }
+
+  .btn-pequeno {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .erro-login {
+    background: #fce8e6;
+    color: #c5221f;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  /* ===== APP ===== */
+
+  #telaApp { display: none; min-height: 100vh; }
+
+  .app { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 220px;
+    background: #222;
+    color: #fff;
+    padding: 22px 14px;
+    flex-shrink: 0;
+  }
+
+  .brand { padding: 8px 12px 22px; font-size: 20px; font-weight: 700; }
+  .brand small { display: block; margin-top: 4px; color: #aaa; font-size: 11px; font-weight: 400; }
+
+  .menu { display: flex; flex-direction: column; gap: 4px; }
+
+  .menu button {
+    width: 100%;
+    padding: 11px 12px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #ddd;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .menu button:hover, .menu button.ativo { background: #444; color: #fff; }
+
+  .menu-usuario {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid #444;
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  .menu-usuario b { display: block; color: #fff; font-size: 14px; margin-bottom: 2px; }
+
+  .content { flex: 1; min-width: 0; }
+
+  .topbar {
+    height: 60px;
+    background: #fff;
+    border-bottom: 1px solid #e3e5e8;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    font-size: 19px;
+    font-weight: 600;
+  }
+
+  .workspace { padding: 22px; }
+
+  .tela { display: none; }
+  .tela.ativo { display: block; }
+
+  .barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .barra h2 { margin: 0; }
+
+  .busca {
+    width: 320px;
+    max-width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e3e5e8;
+    border-radius: 7px;
+    font-size: 14px;
+  }
+
+  .mensagem {
+    padding: 18px;
+    background: #fff;
+    border: 1px solid #e3e5e8;
+    border-radius: 10px;
+    color: #6b7280;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #e3e5e8;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  th, td { padding: 11px; border-bottom: 1px solid #eee; text-align: left; font-size: 13px; }
+  th { background: #f8f8f8; color: #6b7280; font-size: 12px; }
+
+  .subtexto { font-size: 11px; color: #8a8f98; margin-top: 3px; }
+  .nome-cel { font-weight: 700; color: #374151; }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .badge-ativo { background: #e4f5e9; color: #188038; }
+  .badge-inativo { background: #fce8e6; color: #c5221f; }
+
+  .acoes { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* ===== MODAL ===== */
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+
+  .modal.ativo { display: flex; }
+
+  .modal-caixa {
+    width: 560px;
+    max-width: 100%;
+    max-height: 92vh;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-cabecalho {
+    padding: 18px 22px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-cabecalho h2 { margin: 0; font-size: 18px; }
+
+  .btn-fechar { border: 0; background: transparent; font-size: 24px; cursor: pointer; }
+
+  .modal-corpo { padding: 22px; overflow-y: auto; }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .modal-rodape {
+    padding: 15px 22px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .msg { margin-top: 12px; font-size: 13px; display: none; }
+
+  @media(max-width: 780px) {
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      height: 100vh;
+      width: 220px;
+      z-index: 1100;
+      transition: left 0.2s ease;
+      overflow-y: auto;
+    }
+
+    .sidebar.aberta { left: 0; }
+
+    .btn-hamburguer {
+      display: inline-block;
+      border: 0;
+      background: transparent;
+      font-size: 22px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .overlay-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1090;
+    }
+
+    .overlay-menu.ativo { display: block; }
+
+  }
+
+  @media(min-width: 781px) {
+    .btn-hamburguer { display: none; }
+  }
+
+  @media(max-width: 700px) {
+
+    .form-grid { grid-template-columns: 1fr; }
+    .modal-caixa { width: 100%; max-height: 96vh; }
+
+    table, thead, tbody, th, tr, td { display: block; }
+    thead { position: absolute; left: -9999px; }
+    tbody tr { border: 1px solid #e3e5e8; border-radius: 10px; margin-bottom: 10px; padding: 6px 12px; background: #fff; }
+    td { border-bottom: 1px solid #f2f2f2; padding: 8px 0; display: flex; justify-content: space-between; text-align: right; gap: 10px; }
+    td::before { content: attr(data-label); font-weight: 600; font-size: 12px; color: #6b7280; text-align: left; }
+    td.acoes::before { content: ""; }
+
+  }
+
+</style>
+
+</head>
+
+<body>
+
+
+<!-- =========================================================
+     TELA DE LOGIN
+========================================================== -->
+
+<div id="telaLogin">
+
+  <div class="caixa-login">
+
+    <h1>🍕 NILO ERP</h1>
+    <p>Entre com seu usuário e senha.</p>
+
+    <div id="erroLogin" class="erro-login"></div>
+
+    <div class="campo">
+      <label>Usuário</label>
+      <input id="loginUsuario" autocomplete="username">
+    </div>
+
+    <div class="campo">
+      <label>Senha</label>
+      <input id="loginSenha" type="password" autocomplete="current-password">
+    </div>
+
+    <button id="btnLogin" class="btn btn-principal" onclick="fazerLogin()">Entrar</button>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     TELA DO APP
+========================================================== -->
+
+<div id="telaApp">
+
+  <div class="app">
+
+    <div id="overlayMenu" class="overlay-menu" onclick="fecharMenuMobile()"></div>
+
+    <aside class="sidebar" id="sidebar">
+
+      <div class="brand">🍕 NILO ERP<small>Nilo Foods</small></div>
+
+      <nav class="menu">
+        <button class="ativo" data-tela="ingredientes" onclick="navegar('ingredientes')">🥫 Ingredientes</button>
+        <button data-tela="usuarios" onclick="navegar('usuarios')">👤 Usuários</button>
+      </nav>
+
+      <div class="menu-usuario">
+        <b id="sidebarNomeUsuario">—</b>
+        <span id="sidebarPapelUsuario">—</span>
+        <div style="margin-top:10px;">
+          <button class="btn btn-secundario btn-pequeno" onclick="fazerLogout()">Sair</button>
+        </div>
+      </div>
+
+    </aside>
+
+    <main class="content">
+
+      <header class="topbar">
+        <button class="btn-hamburguer" onclick="toggleMenuMobile()">☰</button>
+        <span id="tituloTela">Ingredientes</span>
+      </header>
+
+      <section class="workspace">
+
+        <!-- ===== INGREDIENTES ===== -->
+
+        <div id="tela-ingredientes" class="tela ativo">
+
+          <div class="barra">
+            <h2>Ingredientes</h2>
+            <div style="display:flex;gap:10px;">
+              <input id="buscaIngredientes" class="busca" placeholder="Pesquisar ingrediente..." oninput="debounce('ing', carregarIngredientes, 300)">
+              <button class="btn btn-principal" onclick="abrirNovoIngrediente()">+ Novo</button>
+            </div>
+          </div>
+
+          <div id="resultadoIngredientes" class="mensagem">Carregando...</div>
+
+        </div>
+
+
+        <!-- ===== USUÁRIOS ===== -->
+
+        <div id="tela-usuarios" class="tela">
+
+          <div class="barra">
+            <h2>Usuários</h2>
+            <button class="btn btn-principal" onclick="abrirNovoUsuario()">+ Novo usuário</button>
+          </div>
+
+          <div id="resultadoUsuarios" class="mensagem">Carregando...</div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODAL — INGREDIENTE
+========================================================== -->
+
+<div id="modalIngrediente" class="modal">
+
+  <div class="modal-caixa">
+
+    <div class="modal-cabecalho">
+      <h2 id="tituloModalIngrediente">Novo ingrediente</h2>
+      <button class="btn-fechar" onclick="fecharModal('modalIngrediente')">×</button>
+    </div>
+
+    <div class="modal-corpo">
+
+      <input type="hidden" id="ingId">
+
+      <div class="form-grid">
+
+        <div class="campo"><label>Categoria</label><input id="ingCategoria"></div>
+        <div class="campo"><label>Ingrediente</label><input id="ingNome"></div>
+        <div class="campo"><label>Marca</label><input id="ingMarca"></div>
+        <div class="campo"><label>Fornecedor</label><input id="ingFornecedor"></div>
+        <div class="campo"><label>Unidade de compra</label><input id="ingUnidadeCompra" placeholder="kg, L, un..."></div>
+        <div class="campo"><label>Quantidade de compra</label><input id="ingQtdCompra" type="text" inputmode="decimal"></div>
+        <div class="campo"><label>Unidade da receita</label><input id="ingUnidadeReceita" placeholder="g, ml, un..."></div>
+        <div class="campo"><label>Conversão</label><input id="ingConversao" type="text" inputmode="decimal"></div>
+        <div class="campo"><label>Último custo</label><input id="ingCusto" type="text" inputmode="decimal"></div>
+
+        <div class="campo">
+          <label>Status</label>
+          <select id="ingAtivo">
+            <option value="ATIVO">ATIVO</option>
+            <option value="INATIVO">INATIVO</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div id="msgIngrediente" class="msg"></div>
+
+    </div>
+
+    <div class="modal-rodape">
+      <button class="btn btn-secundario" onclick="fecharModal('modalIngrediente')">Cancelar</button>
+      <button id="btnSalvarIngrediente" class="btn btn-principal" onclick="salvarIngrediente()">💾 Salvar</button>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODAL — USUÁRIO
+========================================================== -->
+
+<div id="modalUsuario" class="modal">
+
+  <div class="modal-caixa">
+
+    <div class="modal-cabecalho">
+      <h2>Novo usuário</h2>
+      <button class="btn-fechar" onclick="fecharModal('modalUsuario')">×</button>
+    </div>
+
+    <div class="modal-corpo">
+
+      <div class="form-grid">
+
+        <div class="campo"><label>Nome</label><input id="usrNome"></div>
+        <div class="campo"><label>Usuário (login)</label><input id="usrLogin" autocomplete="off"></div>
+        <div class="campo"><label>Senha</label><input id="usrSenha" type="password"></div>
+
+        <div class="campo">
+          <label>Papel</label>
+          <select id="usrPapel">
+            <option value="OPERADOR">Operador (só comandas)</option>
+            <option value="ADMIN">Admin (acesso total)</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div id="msgUsuario" class="msg"></div>
+
+    </div>
+
+    <div class="modal-rodape">
+      <button class="btn btn-secundario" onclick="fecharModal('modalUsuario')">Cancelar</button>
+      <button id="btnSalvarUsuario" class="btn btn-principal" onclick="salvarUsuario()">💾 Criar usuário</button>
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* ======================================================
+   CONFIGURAÇÃO — troque pela URL do seu Web App
+   (Implantar → Gerenciar implantações → App da Web → URL)
+====================================================== */
+
+const API_URL = "COLE_AQUI_A_URL_DO_SEU_WEB_APP/exec";
+
+
+/* ======================================================
+   ARMAZENAMENTO DA SESSÃO
+====================================================== */
+
+function salvarSessao(dados) {
+  localStorage.setItem("nilo_token", dados.token);
+  localStorage.setItem("nilo_nome", dados.nome);
+  localStorage.setItem("nilo_papel", dados.papel);
+}
+
+function obterToken() { return localStorage.getItem("nilo_token") || ""; }
+function obterNome() { return localStorage.getItem("nilo_nome") || ""; }
+function obterPapel() { return localStorage.getItem("nilo_papel") || ""; }
+
+function limparSessao() {
+  localStorage.removeItem("nilo_token");
+  localStorage.removeItem("nilo_nome");
+  localStorage.removeItem("nilo_papel");
+}
+
+
+/* ======================================================
+   CHAMADAS À API
+====================================================== */
+
+function apiGet(action, params) {
+
+  params = params || {};
+  params.token = obterToken();
+
+  const query = Object.keys(params)
+    .filter(function(k) { return params[k] !== undefined && params[k] !== null; })
+    .map(function(k) { return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); })
+    .join("&");
+
+  const url = API_URL + "?action=" + encodeURIComponent(action) + (query ? "&" + query : "");
+
+  return fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(tratarRespostaApi);
+
+}
+
+function apiPost(action, corpo) {
+
+  corpo = corpo || {};
+  corpo.token = obterToken();
+
+  const url = API_URL + "?action=" + encodeURIComponent(action);
+
+  return fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(corpo)
+  })
+    .then(function(r) { return r.json(); })
+    .then(tratarRespostaApi);
+
+}
+
+function tratarRespostaApi(resposta) {
+
+  if (!resposta.ok) {
+
+    if (resposta.codigo === "SEM_TOKEN" || resposta.codigo === "TOKEN_INVALIDO") {
+      limparSessao();
+      mostrarTelaLogin("Sua sessão expirou. Entre de novo.");
+    }
+
+    throw new Error(resposta.erro || "Erro desconhecido.");
+
+  }
+
+  return resposta.dados;
+
+}
+
+
+/* ======================================================
+   LOGIN / LOGOUT
+====================================================== */
+
+function fazerLogin() {
+
+  const usuario = document.getElementById("loginUsuario").value.trim();
+  const senha = document.getElementById("loginSenha").value;
+
+  if (!usuario || !senha) {
+    mostrarErroLogin("Informe usuário e senha.");
+    return;
+  }
+
+  const btn = document.getElementById("btnLogin");
+  btn.disabled = true;
+  btn.textContent = "Entrando...";
+
+  apiPost("login", { usuario: usuario, senha: senha })
+    .then(function(dados) {
+
+      salvarSessao(dados);
+      mostrarTelaApp();
+
+    })
+    .catch(function(e) {
+
+      btn.disabled = false;
+      btn.textContent = "Entrar";
+      mostrarErroLogin(e.message);
+
+    });
+
+}
+
+function fazerLogout() {
+
+  apiPost("logout", {})
+    .catch(function() {})
+    .then(function() {
+      limparSessao();
+      mostrarTelaLogin();
+    });
+
+}
+
+function mostrarErroLogin(msg) {
+  const el = document.getElementById("erroLogin");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+
+function mostrarTelaLogin(avisoOpcional) {
+
+  document.getElementById("telaLogin").style.display = "flex";
+  document.getElementById("telaApp").style.display = "none";
+
+  document.getElementById("loginSenha").value = "";
+
+  if (avisoOpcional) {
+    mostrarErroLogin(avisoOpcional);
+  }
+
+  const btn = document.getElementById("btnLogin");
+  btn.disabled = false;
+  btn.textContent = "Entrar";
+
+}
+
+function mostrarTelaApp() {
+
+  document.getElementById("telaLogin").style.display = "none";
+  document.getElementById("telaApp").style.display = "block";
+
+  document.getElementById("sidebarNomeUsuario").textContent = obterNome();
+  document.getElementById("sidebarPapelUsuario").textContent =
+    obterPapel() === "ADMIN" ? "Administrador" : "Operador";
+
+  // operador não vê o menu de usuários
+  document.querySelector('[data-tela="usuarios"]').style.display =
+    obterPapel() === "ADMIN" ? "block" : "none";
+
+  carregarIngredientes();
+
+}
+
+
+/* ======================================================
+   NAVEGAÇÃO
+====================================================== */
+
+function navegar(tela) {
+
+  fecharMenuMobile();
+
+  document.querySelectorAll(".tela").forEach(function(e) { e.classList.remove("ativo"); });
+  document.getElementById("tela-" + tela).classList.add("ativo");
+
+  document.querySelectorAll(".menu button").forEach(function(b) {
+    b.classList.toggle("ativo", b.dataset.tela === tela);
+  });
+
+  const titulos = { ingredientes: "Ingredientes", usuarios: "Usuários" };
+  document.getElementById("tituloTela").textContent = titulos[tela] || tela;
+
+  if (tela === "ingredientes") carregarIngredientes();
+  if (tela === "usuarios") carregarUsuarios();
+
+}
+
+function toggleMenuMobile() {
+  document.getElementById("sidebar").classList.toggle("aberta");
+  document.getElementById("overlayMenu").classList.toggle("ativo");
+}
+
+function fecharMenuMobile() {
+  document.getElementById("sidebar").classList.remove("aberta");
+  document.getElementById("overlayMenu").classList.remove("ativo");
+}
+
+
+/* ======================================================
+   DEBOUNCE (mesma técnica do app principal)
+====================================================== */
+
+const _debounceTimers = {};
+
+function debounce(chave, fn, atraso) {
+  if (_debounceTimers[chave]) clearTimeout(_debounceTimers[chave]);
+  _debounceTimers[chave] = setTimeout(function() {
+    fn();
+    delete _debounceTimers[chave];
+  }, atraso || 300);
+}
+
+
+/* ======================================================
+   UTILITÁRIOS
+====================================================== */
+
+function esc(v) {
+  const d = document.createElement("div");
+  d.textContent = v == null ? "" : v;
+  return d.innerHTML;
+}
+
+function moeda(v) {
+  return Number(v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function fecharModal(id) {
+  document.getElementById(id).classList.remove("ativo");
+}
+
+function mostrarMsg(id, texto, ehErro) {
+  const el = document.getElementById(id);
+  el.style.display = "block";
+  el.style.color = ehErro ? "#c5221f" : "#188038";
+  el.textContent = texto;
+}
+
+function limparMsg(id) {
+  const el = document.getElementById(id);
+  el.style.display = "none";
+  el.textContent = "";
+}
+
+
+/* ======================================================
+   INGREDIENTES
+====================================================== */
+
+function carregarIngredientes() {
+
+  const termo = document.getElementById("buscaIngredientes").value;
+  const c = document.getElementById("resultadoIngredientes");
+  c.innerHTML = '<div class="mensagem">Carregando...</div>';
+
+  apiGet("listarIngredientes", { termo: termo })
+    .then(renderIngredientes)
+    .catch(function(e) {
+      c.innerHTML = '<div class="mensagem" style="color:#c5221f;">' + esc(e.message) + '</div>';
+    });
+
+}
+
+function renderIngredientes(lista) {
+
+  const c = document.getElementById("resultadoIngredientes");
+
+  if (!lista || !lista.length) {
+    c.innerHTML = '<div class="mensagem">Nenhum ingrediente encontrado.</div>';
+    return;
+  }
+
+  let h = '<table><thead><tr><th>Ingrediente</th><th>Marca</th><th>Unidade</th><th>Custo</th><th>Status</th><th></th></tr></thead><tbody>';
+
+  lista.forEach(function(item) {
+
+    const status = String(item.status || "").toUpperCase();
+    const ativo = status === "ATIVO" || status === "SIM";
+    const badge = ativo
+      ? '<span class="badge badge-ativo">ATIVO</span>'
+      : '<span class="badge badge-inativo">INATIVO</span>';
+
+    h +=
+      '<tr>' +
+      '<td data-label="Ingrediente"><div class="nome-cel">' + esc(item.ingrediente) + '</div><div class="subtexto">' + esc(item.id) + '</div></td>' +
+      '<td data-label="Marca">' + esc(item.marca || "-") + '</td>' +
+      '<td data-label="Unidade">' + esc(item.unidade || "-") + '</td>' +
+      '<td data-label="Custo">' + moeda(item.ultimoCusto) + '</td>' +
+      '<td data-label="Status">' + badge + '</td>' +
+      '<td class="acoes"><button class="btn btn-secundario btn-pequeno" onclick="editarIngrediente(\'' + item.id + '\')">✏️ Editar</button></td>' +
+      '</tr>';
+
+  });
+
+  h += '</tbody></table>';
+  c.innerHTML = h;
+
+}
+
+function limparFormIngrediente() {
+
+  ["ingId","ingCategoria","ingNome","ingMarca","ingFornecedor","ingUnidadeCompra",
+   "ingQtdCompra","ingUnidadeReceita","ingConversao","ingCusto"].forEach(function(id) {
+    document.getElementById(id).value = "";
+  });
+
+  document.getElementById("ingAtivo").value = "ATIVO";
+  limparMsg("msgIngrediente");
+
+}
+
+function abrirNovoIngrediente() {
+
+  limparFormIngrediente();
+  document.getElementById("tituloModalIngrediente").textContent = "Novo ingrediente";
+  document.getElementById("modalIngrediente").classList.add("ativo");
+
+}
+
+function editarIngrediente(id) {
+
+  limparFormIngrediente();
+  document.getElementById("tituloModalIngrediente").textContent = "Carregando...";
+  document.getElementById("modalIngrediente").classList.add("ativo");
+
+  apiGet("obterIngrediente", { id: id })
+    .then(function(item) {
+
+      document.getElementById("tituloModalIngrediente").textContent = "Editar ingrediente";
+      document.getElementById("ingId").value = item.id || "";
+      document.getElementById("ingCategoria").value = item.categoria || "";
+      document.getElementById("ingNome").value = item.ingrediente || "";
+      document.getElementById("ingMarca").value = item.marca || "";
+      document.getElementById("ingFornecedor").value = item.fornecedor || "";
+      document.getElementById("ingUnidadeCompra").value = item.unidadeCompra || "";
+      document.getElementById("ingQtdCompra").value = item.quantidadeCompra || "";
+      document.getElementById("ingUnidadeReceita").value = item.unidadeReceita || "";
+      document.getElementById("ingConversao").value = item.conversao || "";
+      document.getElementById("ingCusto").value = item.ultimoCusto || "";
+
+      const ativo = String(item.ativo || "ATIVO").toUpperCase();
+      document.getElementById("ingAtivo").value = ativo.includes("INAT") ? "INATIVO" : "ATIVO";
+
+    })
+    .catch(function(e) {
+      mostrarMsg("msgIngrediente", e.message, true);
+    });
+
+}
+
+function salvarIngrediente() {
+
+  const dados = {
+    id: document.getElementById("ingId").value,
+    categoria: document.getElementById("ingCategoria").value,
+    ingrediente: document.getElementById("ingNome").value,
+    marca: document.getElementById("ingMarca").value,
+    fornecedor: document.getElementById("ingFornecedor").value,
+    unidadeCompra: document.getElementById("ingUnidadeCompra").value,
+    quantidadeCompra: document.getElementById("ingQtdCompra").value,
+    unidadeReceita: document.getElementById("ingUnidadeReceita").value,
+    conversao: document.getElementById("ingConversao").value,
+    ultimoCusto: document.getElementById("ingCusto").value,
+    ativo: document.getElementById("ingAtivo").value === "ATIVO"
+  };
+
+  const btn = document.getElementById("btnSalvarIngrediente");
+  btn.disabled = true;
+  limparMsg("msgIngrediente");
+
+  apiPost("salvarIngrediente", { dados: dados })
+    .then(function() {
+
+      btn.disabled = false;
+      mostrarMsg("msgIngrediente", "Salvo com sucesso.", false);
+      carregarIngredientes();
+
+    })
+    .catch(function(e) {
+      btn.disabled = false;
+      mostrarMsg("msgIngrediente", e.message, true);
+    });
+
+}
+
+
+/* ======================================================
+   USUÁRIOS
+====================================================== */
+
+function carregarUsuarios() {
+
+  const c = document.getElementById("resultadoUsuarios");
+  c.innerHTML = '<div class="mensagem">Carregando...</div>';
+
+  apiGet("listarUsuarios", {})
+    .then(renderUsuarios)
+    .catch(function(e) {
+      c.innerHTML = '<div class="mensagem" style="color:#c5221f;">' + esc(e.message) + '</div>';
+    });
+
+}
+
+function renderUsuarios(lista) {
+
+  const c = document.getElementById("resultadoUsuarios");
+
+  if (!lista || !lista.length) {
+    c.innerHTML = '<div class="mensagem">Nenhum usuário cadastrado.</div>';
+    return;
+  }
+
+  let h = '<table><thead><tr><th>Nome</th><th>Usuário</th><th>Papel</th><th>Status</th><th></th></tr></thead><tbody>';
+
+  lista.forEach(function(u) {
+
+    const inativo = u.status === "INATIVO";
+    const badge = inativo
+      ? '<span class="badge badge-inativo">INATIVO</span>'
+      : '<span class="badge badge-ativo">ATIVO</span>';
+
+    h +=
+      '<tr>' +
+      '<td data-label="Nome">' + esc(u.nome) + '</td>' +
+      '<td data-label="Usuário">' + esc(u.usuario) + '</td>' +
+      '<td data-label="Papel">' + (u.papel === "ADMIN" ? "Admin" : "Operador") + '</td>' +
+      '<td data-label="Status">' + badge + '</td>' +
+      '<td class="acoes"><button class="btn btn-secundario btn-pequeno" onclick="alternarStatusUsuario(\'' + u.id + '\',\'' + (inativo ? "ATIVO" : "INATIVO") + '\')">' + (inativo ? "✅ Ativar" : "🚫 Inativar") + '</button></td>' +
+      '</tr>';
+
+  });
+
+  h += '</tbody></table>';
+  c.innerHTML = h;
+
+}
+
+function abrirNovoUsuario() {
+
+  document.getElementById("usrNome").value = "";
+  document.getElementById("usrLogin").value = "";
+  document.getElementById("usrSenha").value = "";
+  document.getElementById("usrPapel").value = "OPERADOR";
+  limparMsg("msgUsuario");
+
+  document.getElementById("modalUsuario").classList.add("ativo");
+
+}
+
+function salvarUsuario() {
+
+  const dados = {
+    nome: document.getElementById("usrNome").value.trim(),
+    usuario: document.getElementById("usrLogin").value.trim(),
+    senha: document.getElementById("usrSenha").value,
+    papel: document.getElementById("usrPapel").value
+  };
+
+  const btn = document.getElementById("btnSalvarUsuario");
+  btn.disabled = true;
+  limparMsg("msgUsuario");
+
+  apiPost("criarUsuario", { dados: dados })
+    .then(function() {
+
+      btn.disabled = false;
+      fecharModal("modalUsuario");
+      carregarUsuarios();
+
+    })
+    .catch(function(e) {
+      btn.disabled = false;
+      mostrarMsg("msgUsuario", e.message, true);
+    });
+
+}
+
+function alternarStatusUsuario(id, novoStatus) {
+
+  if (!confirm(novoStatus === "INATIVO" ? "Inativar este usuário?" : "Reativar este usuário?")) return;
+
+  apiPost("alterarStatusUsuario", { id: id, status: novoStatus })
+    .then(function() {
+      carregarUsuarios();
+    })
+    .catch(function(e) {
+      alert(e.message);
+    });
+
+}
+
+
+/* ======================================================
+   INICIAR
+====================================================== */
+
+document.getElementById("loginSenha").addEventListener("keydown", function(ev) {
+  if (ev.key === "Enter") fazerLogin();
+});
+
+if (obterToken()) {
+  mostrarTelaApp();
+} else {
+  mostrarTelaLogin();
+}
+
+</script>
+
+</body>
+
+</html>
