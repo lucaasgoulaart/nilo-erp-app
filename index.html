@@ -984,7 +984,10 @@ function renderUsuarios(lista) {
       '<td data-label="Usuário">' + esc(u.usuario) + '</td>' +
       '<td data-label="Papel">' + (u.papel === "ADMIN" ? "Admin" : "Operador") + '</td>' +
       '<td data-label="Status">' + badge + '</td>' +
-      '<td class="acoes"><button class="btn btn-secundario btn-pequeno" onclick="alternarStatusUsuario(\'' + u.id + '\',\'' + (inativo ? "ATIVO" : "INATIVO") + '\')">' + (inativo ? "✅ Ativar" : "🚫 Inativar") + '</button></td>' +
+      '<td class="acoes">' +
+      '<button class="btn btn-secundario btn-pequeno" onclick="alterarSenhaUsuarioPrompt(\'' + u.id + '\',\'' + esc(u.nome).replace(/'/g, "\\'") + '\')">🔑 Senha</button>' +
+      '<button class="btn btn-secundario btn-pequeno" onclick="alternarStatusUsuario(\'' + u.id + '\',\'' + (inativo ? "ATIVO" : "INATIVO") + '\')">' + (inativo ? "✅ Ativar" : "🚫 Inativar") + '</button>' +
+      '</td>' +
       '</tr>';
 
   });
@@ -1041,6 +1044,27 @@ function alternarStatusUsuario(id, novoStatus) {
   apiChamar("alterarStatusUsuario", { id: id, status: novoStatus })
     .then(function() {
       carregarUsuarios();
+    })
+    .catch(function(e) {
+      alert(e.message);
+    });
+
+}
+
+function alterarSenhaUsuarioPrompt(id, nome) {
+
+  const novaSenha = prompt("Nova senha pra " + nome + " (mínimo 6 caracteres):");
+
+  if (!novaSenha) return;
+
+  if (novaSenha.length < 6) {
+    alert("A senha precisa ter pelo menos 6 caracteres.");
+    return;
+  }
+
+  apiChamar("alterarSenhaUsuario", { id: id, novaSenha: novaSenha })
+    .then(function() {
+      alert("Senha alterada com sucesso.");
     })
     .catch(function(e) {
       alert(e.message);
