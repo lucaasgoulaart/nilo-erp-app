@@ -559,7 +559,7 @@
    (Implantar → Gerenciar implantações → App da Web → URL)
 ====================================================== */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwpdUDrXla5UYIsPc1YW2hsLAAvVCWv7Ocfs7OUScRAzxC0ABTuAFPnZuG3WP2Ppl6y/exec";
+const API_URL = "COLE_AQUI_A_URL_DO_SEU_WEB_APP/exec";
 
 
 /* ======================================================
@@ -587,36 +587,30 @@ function limparSessao() {
    CHAMADAS À API
 ====================================================== */
 
-function apiGet(action, params) {
+function apiChamar(action, params) {
 
   params = params || {};
   params.token = obterToken();
 
-  const query = Object.keys(params)
-    .filter(function(k) { return params[k] !== undefined && params[k] !== null; })
-    .map(function(k) { return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); })
-    .join("&");
+  const partes = [];
 
-  const url = API_URL + "?action=" + encodeURIComponent(action) + (query ? "&" + query : "");
+  Object.keys(params).forEach(function(k) {
+
+    let valor = params[k];
+
+    if (valor === undefined || valor === null) return;
+
+    if (typeof valor === "object") {
+      valor = JSON.stringify(valor);
+    }
+
+    partes.push(encodeURIComponent(k) + "=" + encodeURIComponent(valor));
+
+  });
+
+  const url = API_URL + "?action=" + encodeURIComponent(action) + (partes.length ? "&" + partes.join("&") : "");
 
   return fetch(url)
-    .then(function(r) { return r.json(); })
-    .then(tratarRespostaApi);
-
-}
-
-function apiPost(action, corpo) {
-
-  corpo = corpo || {};
-  corpo.token = obterToken();
-
-  const url = API_URL + "?action=" + encodeURIComponent(action);
-
-  return fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(corpo)
-  })
     .then(function(r) { return r.json(); })
     .then(tratarRespostaApi);
 
@@ -658,7 +652,7 @@ function fazerLogin() {
   btn.disabled = true;
   btn.textContent = "Entrando...";
 
-  apiPost("login", { usuario: usuario, senha: senha })
+  apiChamar("login", { usuario: usuario, senha: senha })
     .then(function(dados) {
 
       salvarSessao(dados);
@@ -677,7 +671,7 @@ function fazerLogin() {
 
 function fazerLogout() {
 
-  apiPost("logout", {})
+  apiChamar("logout", {})
     .catch(function() {})
     .then(function() {
       limparSessao();
@@ -818,7 +812,7 @@ function carregarIngredientes() {
   const c = document.getElementById("resultadoIngredientes");
   c.innerHTML = '<div class="mensagem">Carregando...</div>';
 
-  apiGet("listarIngredientes", { termo: termo })
+  apiChamar("listarIngredientes", { termo: termo })
     .then(renderIngredientes)
     .catch(function(e) {
       c.innerHTML = '<div class="mensagem" style="color:#c5221f;">' + esc(e.message) + '</div>';
@@ -888,7 +882,7 @@ function editarIngrediente(id) {
   document.getElementById("tituloModalIngrediente").textContent = "Carregando...";
   document.getElementById("modalIngrediente").classList.add("ativo");
 
-  apiGet("obterIngrediente", { id: id })
+  apiChamar("obterIngrediente", { id: id })
     .then(function(item) {
 
       document.getElementById("tituloModalIngrediente").textContent = "Editar ingrediente";
@@ -933,7 +927,7 @@ function salvarIngrediente() {
   btn.disabled = true;
   limparMsg("msgIngrediente");
 
-  apiPost("salvarIngrediente", { dados: dados })
+  apiChamar("salvarIngrediente", { dados: dados })
     .then(function() {
 
       btn.disabled = false;
@@ -958,7 +952,7 @@ function carregarUsuarios() {
   const c = document.getElementById("resultadoUsuarios");
   c.innerHTML = '<div class="mensagem">Carregando...</div>';
 
-  apiGet("listarUsuarios", {})
+  apiChamar("listarUsuarios", {})
     .then(renderUsuarios)
     .catch(function(e) {
       c.innerHTML = '<div class="mensagem" style="color:#c5221f;">' + esc(e.message) + '</div>';
@@ -1025,7 +1019,7 @@ function salvarUsuario() {
   btn.disabled = true;
   limparMsg("msgUsuario");
 
-  apiPost("criarUsuario", { dados: dados })
+  apiChamar("criarUsuario", { dados: dados })
     .then(function() {
 
       btn.disabled = false;
@@ -1044,7 +1038,7 @@ function alternarStatusUsuario(id, novoStatus) {
 
   if (!confirm(novoStatus === "INATIVO" ? "Inativar este usuário?" : "Reativar este usuário?")) return;
 
-  apiPost("alterarStatusUsuario", { id: id, status: novoStatus })
+  apiChamar("alterarStatusUsuario", { id: id, status: novoStatus })
     .then(function() {
       carregarUsuarios();
     })
